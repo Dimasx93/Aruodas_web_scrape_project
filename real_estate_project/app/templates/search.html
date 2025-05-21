@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Property Search{% endblock %}
+
+{% block content %}
+<h2>Search Properties</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.city.label }} {{ form.city }}<br>
+    {{ form.district.label }} {{ form.district }}<br>
+    {{ form.price_min.label }} {{ form.price_min }}<br>
+    {{ form.price_max.label }} {{ form.price_max }}<br>
+    {{ form.size_min.label }} {{ form.size_min }}<br>
+    {{ form.size_max.label }} {{ form.size_max }}<br>
+    {{ form.price_m2_min.label }} {{ form.price_m2_min }}<br>
+    {{ form.price_m2_max.label }} {{ form.price_m2_max }}<br>
+    {{ form.number_of_rooms.label }} {{ form.number_of_rooms }}<br>
+    {{ form.submit }}
+        <br><br>
+    <!-- Save Search UI -->
+<hr>
+<h3>Save This Search</h3>
+<label for="searchName">Search Name:</label>
+<input type="text" id="searchName" placeholder="e.g. Cheap in Vilnius">
+<button id="saveSearchBtn">Save Search</button>
+
+<script>
+  document.getElementById("saveSearchBtn").addEventListener("click", function () {
+    const name = document.getElementById("searchName").value;
+
+    // Always safe and fallback to empty query
+    let query = {};
+    try {
+      query = JSON.parse('{{ query | tojson | safe }}');
+    } catch (e) {
+      console.warn("No query found or query is not JSON parseable");
+    }
+
+    if (!name) {
+      alert("Please provide a name for the search.");
+      return;
+    }
+
+    fetch("/save_search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({ name: name, query: query })
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert(data.message || "Search saved!");
+    })
+    .catch(error => {
+      alert("Error saving search.");
+      console.error(error);
+    });
+  });
+</script>
+
+
+</form>
+<!--Medium Value UI-->
+<hr>
+<h3>Analyze Medium value</h3>
+<form method="POST" action="{{ url_for('analyze_selected_median') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label for="field">Select field for median:</label>
+    <select name="field" id="field">
+      <option value="price">Price (€)</option>
+      <option value="size_m2">Size (m²)</option>
+      <option value="price_per_m2">Price per m² (€)</option>
+      <option value="number_of_rooms">Number of Rooms</option>
+    </select>
+    <button type="submit">Show Result</button>
+</form>
+
+<!--Show properties UI-->
+{% if results %}
+    <h3>Results:</h3>
+    <ul>
+        {% for prop in results %}
+            <li>
+                {{ prop.city }}, {{ prop.district }} - {{ prop.price }} € -
+                {{ prop.size_m2 }} m² - {{ prop.number_of_rooms }} rooms - 
+                {{ prop.price_per_m2 }} €/m² <br>
+                <a href="{{ prop.url }}" target="_blank">View advertisement</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+{% endblock %}

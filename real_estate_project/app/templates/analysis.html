@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Medium {{ field.replace("_", " ").title() }} by City</h2>
+  <img src="data:image/png;base64,{{ image }}" alt="Chart">
+{% endblock %}

@@ -1,0 +1,33 @@
+<!-- base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Apartments Calculator{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a class="{% if active == 'index' %}active{% endif %}" href="{{ url_for('index') }}">Home</a>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('search_properties') }}">Search</a>
+        <a href="{{ url_for('my_searches') }}">Saved Searches</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+        <span style="float:right; color:white; margin: 15px;">Hello, {{ current_user.username }}!</span>
+        {% else %}
+        <a href="{{ url_for('register_user') }}">Register</a>
+        <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+
+</html>
