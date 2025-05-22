@@ -2,20 +2,24 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Length, Optional, NumberRange
+from wtforms.widgets import TextInput
+
 
 class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=3, max=20)])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Register')
 
+
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
-class PropertySearchForm(FlaskForm):
 
-    city = StringField("City", validators=[Optional()])
+class PropertySearchForm(FlaskForm):
+    city = StringField("City", widget=TextInput(), render_kw={"id": "city-input", "autocomplete": "off"})
+
     district = StringField("District", validators=[Optional()])
 
     price_min = IntegerField("Min Price (€)", validators=[Optional(), NumberRange(min=1)])

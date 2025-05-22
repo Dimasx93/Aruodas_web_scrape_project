@@ -192,9 +192,11 @@ def save_search():
     name = data.get("name")
     query = data.get("query")
 
-    if not name or not query:
-        print(f"ERROR: {name} or {query} missing")
-        return jsonify({"error": "Missing name or query"}), 400
+    if not name:
+        return jsonify({"error": "Search name is required"}), 400
+
+    if query is None:
+        return jsonify({"error": "Query is missing"}), 400
 
     saved_search = {
         "user_id": current_user.id,
@@ -246,6 +248,26 @@ def delete_search(search_id):
         flash("Failed to delete search.", "danger")
 
     return redirect(url_for("my_searches"))
+
+@app.route("/autocomplete/city")
+@login_required
+def autocomplete_city():
+    term = request.args.get("q", "")
+    if not term:
+        return jsonify([])
+
+    #Query cities that start with the search term (case-insensitive)
+    cities = mongo.db.properties.distinct("city", {"city": {"$regex": f"^{term}", "$options": "i"}})
+
+    #Optional: limit to 10 results
+    return jsonify(cities[:10])
+
+@app.route("/autocomplete/district")
+@login_required
+def autocomplete_district():
+    q = request.args.get("q", "")
+    results = mongo.db.properties.distinct("district", {"district": {"$regex": f"^{q}", "$options": "i"}})
+    return jsonify(results[:10])
 
 
 if __name__ == '__main__':
