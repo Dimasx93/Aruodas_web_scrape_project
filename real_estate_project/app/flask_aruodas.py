@@ -14,6 +14,7 @@ import json
 from datetime import datetime
 from bson import ObjectId
 
+
 @app.context_processor
 def inject_csrf_token():
     return dict(csrf_token=generate_csrf())
@@ -216,6 +217,7 @@ def my_searches():
     searches = mongo.db.saved_searches.find({"user_id": current_user.id})
     return render_template("my_searches.html", searches=searches)
 
+
 @app.route("/rerun_search", methods=["POST"])
 @login_required
 def rerun_saved_search():
@@ -228,7 +230,7 @@ def rerun_saved_search():
     collection = mongo.db.properties
     results = list(collection.find(query))
 
-    #Pass empty form since we're not repopulating fields from query here
+    # Pass empty form since we're not repopulating fields from query here
     form = PropertySearchForm()
 
     return render_template("search.html", form=form, results=results, query=query)
@@ -249,6 +251,7 @@ def delete_search(search_id):
 
     return redirect(url_for("my_searches"))
 
+
 @app.route("/autocomplete/city")
 @login_required
 def autocomplete_city():
@@ -256,18 +259,30 @@ def autocomplete_city():
     if not term:
         return jsonify([])
 
-    #Query cities that start with the search term (case-insensitive)
+    # Query cities that start with the search term (case-insensitive)
     cities = mongo.db.properties.distinct("city", {"city": {"$regex": f"^{term}", "$options": "i"}})
 
-    #Optional: limit to 10 results
+    # Optional: limit to 10 results
     return jsonify(cities[:10])
 
-@app.route("/autocomplete/district")
+
+@app.route("/autocomplete/district", methods=["GET"])
 @login_required
 def autocomplete_district():
+    city = request.args.get("city", "")
     q = request.args.get("q", "")
-    results = mongo.db.properties.distinct("district", {"district": {"$regex": f"^{q}", "$options": "i"}})
-    return jsonify(results[:10])
+    if not city:
+        return jsonify([])
+
+    # Find distinct districts within the given city and starting with query
+    pipeline = [
+        {"$match": {"city": {"$regex": f"^{city}$", "$options": "i"},
+                    "district": {"$regex": f"^{q}", "$options": "i"}}},
+        {"$group": {"_id": "$district"}},
+        {"$limit": 10}
+    ]
+    districts = [d["_id"] for d in mongo.db.properties.aggregate(pipeline)]
+    return jsonify(districts)
 
 
 if __name__ == '__main__':

@@ -4,16 +4,19 @@
 {% block content %}
 <h2>Search Properties</h2>
 
+<!-- Include Select2 CSS & JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <form method="POST">
     {{ form.hidden_tag() }}
 
-    <label for="{{ form.city.id }}">City:</label>
-    {{ form.city(id="city-input", autocomplete="off") }}
-    <ul id="city-suggestions" class="suggestions-list"></ul>
+    <label for="city">City:</label>
+    <select id="city" name="city" style="width: 100%;"></select>
 
-    <label for="{{ form.district.id }}">District:</label>
-    {{ form.district(id="district-input", autocomplete="off") }}
-    <ul id="district-suggestions" class="suggestions-list"></ul>
+    <label for="district">District:</label>
+    <select id="district" name="district" style="width: 100%;"></select>
 
     {{ form.price_min.label }} {{ form.price_min }}<br>
     {{ form.price_max.label }} {{ form.price_max }}<br>
@@ -23,99 +26,16 @@
     {{ form.price_m2_max.label }} {{ form.price_m2_max }}<br>
     {{ form.number_of_rooms.label }} {{ form.number_of_rooms }}<br>
     {{ form.submit }}
-    <br><br>
-    <!-- Save Search UI -->
-    <hr>
-    <h3>Save This Search</h3>
-    <label for="searchName">Search Name:</label>
-    <input type="text" id="searchName" placeholder="e.g. Cheap in Vilnius">
-    <button id="saveSearchBtn">Save Search</button>
-
-    <script>
-        document.getElementById("saveSearchBtn").addEventListener("click", function () {
-          const name = document.getElementById("searchName").value;
-
-          //inject query directly as JS object
-          const query = {{ query | tojson | safe }};
-
-          if (!name) {
-            alert("Please provide a name for the search.");
-            return;
-          }
-
-          fetch("/save_search", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({ name: name, query: query })
-          })
-          .then(response => response.json())
-          .then(data => {
-            alert(data.message || "Search saved!");
-          })
-          .catch(error => {
-            alert("Error saving search.");
-            console.error(error);
-          });
-        });
-
-          function setupAutosuggest(inputId, suggestionBoxId, endpoint) {
-            const input = document.getElementById(inputId);
-            const suggestionBox = document.getElementById(suggestionBoxId);
-
-            input.addEventListener("input", function () {
-              const query = this.value;
-              if (!query) {
-                suggestionBox.style.display = "none";
-                return;
-              }
-
-              fetch(`/autocomplete/${endpoint}?q=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(results => {
-                  suggestionBox.innerHTML = "";
-                  if (results.length === 0) {
-                    suggestionBox.style.display = "none";
-                    return;
-                  }
-
-                  results.forEach(item => {
-                    const li = document.createElement("li");
-                    li.textContent = item;
-                    li.addEventListener("click", () => {
-                      input.value = item;
-                      suggestionBox.style.display = "none";
-                    });
-                    suggestionBox.appendChild(li);
-                  });
-
-                  const rect = input.getBoundingClientRect();
-                  suggestionBox.style.left = rect.left + "px";
-                  suggestionBox.style.top = rect.bottom + "px";
-                  suggestionBox.style.width = rect.width + "px";
-                  suggestionBox.style.display = "block";
-                });
-            });
-
-            document.addEventListener("click", function (e) {
-              if (!suggestionBox.contains(e.target) && e.target !== input) {
-                suggestionBox.style.display = "none";
-              }
-            });
-          }
-
-          document.addEventListener("DOMContentLoaded", function () {
-            setupAutosuggest("city-input", "city-suggestions", "city");
-            setupAutosuggest("district-input", "district-suggestions", "district");
-          });
-
-    </script>
-
-
 </form>
-<!--Medium Value UI-->
+
+<!-- Save Search UI -->
+<hr>
+<h3>Save This Search</h3>
+<label for="searchName">Search Name:</label>
+<input type="text" id="searchName" placeholder="e.g. Cheap in Vilnius">
+<button id="saveSearchBtn">Save Search</button>
+
+<!-- Analyze Median -->
 <hr>
 <h3>Analyze Medium value</h3>
 <form method="POST" action="{{ url_for('analyze_selected_median') }}">
@@ -130,7 +50,7 @@
     <button type="submit">Show Result</button>
 </form>
 
-<!--Show properties UI-->
+<!-- Show Results -->
 {% if results %}
 <h3>Results:</h3>
 <ul>
@@ -145,5 +65,81 @@
 </ul>
 {% endif %}
 
+<!-- JavaScript -->
+<script>
+$(document).ready(function() {
+    $('#city').select2({
+        placeholder: 'Select a city',
+        ajax: {
+            url: '/autocomplete/city',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return { q: params.term };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map(function (item) {
+                        return { id: item, text: item };
+                    })
+                };
+            }
+        }
+    });
+
+    $('#district').select2({
+        placeholder: 'Select a district',
+        ajax: {
+            url: '/autocomplete/district',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    city: $('#city').val()
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map(function (item) {
+                        return { id: item, text: item };
+                    })
+                };
+            }
+        }
+    });
+
+    // Reset district when city changes
+    $('#city').on('change', function () {
+        $('#district').val(null).trigger('change');
+    });
+
+    // Save search
+    document.getElementById("saveSearchBtn").addEventListener("click", function () {
+        const name = document.getElementById("searchName").value;
+        const query = {{ query | tojson | safe }};
+        if (!name) {
+            alert("Please provide a name for the search.");
+            return;
+        }
+        fetch("/save_search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ name: name, query: query })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message || "Search saved!");
+        })
+        .catch(error => {
+            alert("Error saving search.");
+            console.error(error);
+        });
+    });
+});
+</script>
 
 {% endblock %}
