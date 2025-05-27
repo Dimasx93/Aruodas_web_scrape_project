@@ -37,18 +37,53 @@
 
 <!-- Analyze Median -->
 <hr>
-<h3>Analyze Medium value</h3>
-<form method="POST" action="{{ url_for('analyze_selected_median') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <label for="field">Select field for median:</label>
-    <select name="field" id="field">
-        <option value="price">Price (€)</option>
-        <option value="size_m2">Size (m²)</option>
-        <option value="price_per_m2">Price per m² (€)</option>
-        <option value="number_of_rooms">Number of Rooms</option>
-    </select>
-    <button type="submit">Show Result</button>
-</form>
+<h3>Analyze Median Value</h3>
+<label for="fieldSelect">Select field:</label>
+<select id="fieldSelect">
+    <option value="price">Price (€)</option>
+    <option value="size_m2">Size (m²)</option>
+    <option value="price_per_m2">Price per m² (€)</option>
+    <option value="number_of_rooms">Number of Rooms</option>
+</select>
+<button id="analyzeBtn">Show Result</button>
+
+<!-- JavaScript -->
+<script>
+document.getElementById('analyzeBtn').addEventListener('click', () => {
+  const field = document.getElementById('fieldSelect').value;
+
+  // You can add your query filters here if needed, or just send empty object
+  const query = {};
+
+  fetch('/analyze_median', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({ field: field, query: query })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Server error ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Save the median data and selected field in sessionStorage to pass to analysis page
+    sessionStorage.setItem('medianData', JSON.stringify(data));
+    sessionStorage.setItem('medianField', field);
+
+    // Redirect to analysis page (adjust URL if needed)
+    window.location.href = "{{ url_for('analysis_page') }}";
+  })
+  .catch(err => {
+    console.error('Error fetching median data:', err);
+    alert('Failed to get median data. See console.');
+  });
+});
+</script>
+
 
 <!-- Show Results -->
 {% if results %}

@@ -127,62 +127,40 @@ def search_properties():
 @app.route("/analyze_median", methods=["POST"])
 @login_required
 def analyze_selected_median():
-    # Get selected field and optional query
-    field = request.form.get("field")
-    query_raw = request.form.get("query")  # Can be None or empty
+    data = request.get_json()
 
-    # Validate selected field
-    if not field:
-        return "Missing field selection."
+    field = data.get("field")
+    query = data.get("query", {})
+    city_filter = data.get("city")
+    limit = data.get("limit", 0)
 
     if field not in {"price", "size_m2", "price_per_m2", "number_of_rooms"}:
-        return f"Invalid field: {field}"
+        return jsonify({"error": "Invalid field"}), 400
 
-    # Default to no filtering if no query passed
-    if query_raw:
-        try:
-            query = json.loads(query_raw)
-        except json.JSONDecodeError:
-            return "Invalid query format."
-    else:
-        query = {}  # No filter applied
+    if city_filter:
+        query["city"] = city_filter
 
-    # Fetch filtered or unfiltered data
     cursor = mongo.db.properties.find(query, {"_id": 0, field: 1, "city": 1})
-    data = list(cursor)
+    df = pd.DataFrame(list(cursor)).dropna(subset=[field])
 
-    if not data:
-        return "No matching data to analyze."
+    if df.empty:
+        return jsonify([])
 
-    # Convert to DataFrame
-    df = pd.DataFrame(data)
+    medians = (
+        df.groupby("city")[field]
+        .median()
+        .sort_values(ascending=False)
+        .reset_index()
+        .rename(columns={field: "value"})
+    )
 
-    if df.empty or field not in df.columns:
-        return f"No data found for field '{field}'."
+    if limit > 0 and len(medians) > limit * 2:
+        top = medians.head(limit)
+        bottom = medians.tail(limit)
+        medians = pd.concat([top, bottom])
 
-    # Clean data
-    df = df.dropna(subset=[field])
+    return jsonify(medians.to_dict(orient="records"))
 
-    # Group by city and compute median
-    median_by_city = df.groupby("city")[field].median().sort_values(ascending=False)
-
-    # Plot
-    fig, ax = plt.subplots(figsize=(20, 6))  # Increase figure width
-    median_by_city.plot(kind="bar", ax=ax)
-    ax.set_title(f"Medium {field.replace("_", " ").title()} by City")
-    ax.set_ylabel(field.replace("_", " ").title())
-    ax.set_xlabel("City")
-    plt.xticks(rotation=45, ha="right")
-    plt.tight_layout()
-
-    # Convert to base64 image
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png")
-    buf.seek(0)
-    image_base64 = base64.b64encode(buf.read()).decode("utf-8")
-    buf.close()
-
-    return render_template("analysis.html", image=image_base64, field=field)
 
 
 @app.route("/save_search", methods=["POST"])
@@ -255,15 +233,10 @@ def delete_search(search_id):
 @app.route("/autocomplete/city")
 @login_required
 def autocomplete_city():
-    term = request.args.get("q", "")
-    if not term:
-        return jsonify([])
+    cities = mongo.db.properties.distinct("city")
+    # Return as a list of { id: ..., text: ... } for Select2
+    return jsonify([{"id": city, "text": city} for city in sorted(cities)])
 
-    # Query cities that start with the search term (case-insensitive)
-    cities = mongo.db.properties.distinct("city", {"city": {"$regex": f"^{term}", "$options": "i"}})
-
-    # Optional: limit to 10 results
-    return jsonify(cities[:10])
 
 
 @app.route("/autocomplete/district", methods=["GET"])
@@ -283,6 +256,12 @@ def autocomplete_district():
     ]
     districts = [d["_id"] for d in mongo.db.properties.aggregate(pipeline)]
     return jsonify(districts)
+
+
+@app.route("/analysis_page")
+@login_required
+def analysis_page():
+    return render_template("analysis.html")
 
 
 if __name__ == '__main__':

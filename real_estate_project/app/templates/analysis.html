@@ -1,6 +1,154 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Medium {{ field.replace("_", " ").title() }} by City</h2>
-  <img src="data:image/png;base64,{{ image }}" alt="Chart">
+<h2>Interactive Chart</h2>
+
+<!-- Filters -->
+<label for="fieldSelect">Select field:</label>
+<select id="fieldSelect">
+  <option value="price">Price (€)</option>
+  <option value="size_m2">Size (m²)</option>
+  <option value="price_per_m2">Price per m² (€)</option>
+  <option value="number_of_rooms">Number of Rooms</option>
+</select>
+
+<br><br>
+
+<label for="cityFilter">Filter by City  :</label>
+<select id="cityFilter" style="width: 300px;"></select>
+
+<br><br>
+
+<label for="limitSelect">Show top and bottom cities:</label>
+<select id="limitSelect">
+  <option value="0">Show All</option>
+  <option value="5" selected>Top & Bottom 5</option>
+  <option value="10">Top & Bottom 10</option>
+</select>
+
+<br><br>
+
+<!-- Chart container -->
+<svg id="barChart" width="900" height="500"></svg>
+
+<!-- Scripts -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<script>
+const queryData = {{ query | tojson | safe if query is defined else '{}' }};
+const csrfToken = "{{ csrf_token }}";
+
+// Initialize city dropdown with all cities
+$(document).ready(function() {
+  $.getJSON("/autocomplete/city", function(cities) {
+    $('#cityFilter').select2({
+      placeholder: 'Select a city',
+      allowClear: true,
+      data: cities
+    });
+
+    $('#cityFilter').on('change', function () {
+      loadChart(document.getElementById("fieldSelect").value);
+    });
+  });
+});
+
+// Load chart with selected options
+function loadChart(field) {
+  const city = $('#cityFilter').val();
+  const limit = parseInt(document.getElementById("limitSelect").value, 10);
+
+  fetch("/analyze_median", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken
+    },
+    body: JSON.stringify({ field, query: queryData, city: city || null, limit })
+  })
+  .then(response => {
+    if (!response.ok) {
+      console.error("Fetch failed:", response.status);
+      return [];
+    }
+    return response.json();
+  })
+  .then(data => renderChart(data, field));
+}
+
+// Draw chart
+function renderChart(data, field) {
+  const svg = d3.select("#barChart");
+  svg.selectAll("*").remove();
+
+  if (data.length === 0) {
+    svg.append("text")
+      .attr("x", 450)
+      .attr("y", 250)
+      .attr("text-anchor", "middle")
+      .style("font-size", "18px")
+      .text("No data available for the selected filters.");
+    return;
+  }
+
+  const margin = { top: 40, right: 20, bottom: 150, left: 100 };
+  const width = +svg.attr("width") - margin.left - margin.right;
+  const height = +svg.attr("height") - margin.top - margin.bottom;
+
+  const chart = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleBand()
+      .domain(data.map(d => d.city))
+      .range([0, width])
+      .padding(0.2);
+
+  const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.value)]).nice()
+      .range([height, 0]);
+
+  chart.append("g").call(d3.axisLeft(y));
+
+  chart.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("transform", "rotate(-45)")
+      .style("text-anchor", "end");
+
+  chart.selectAll(".bar")
+      .data(data)
+      .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", d => x(d.city))
+      .attr("y", d => y(d.value))
+      .attr("width", x.bandwidth())
+      .attr("height", d => height - y(d.value))
+      .attr("fill", "#4e79a7");
+
+  chart.append("text")
+      .attr("x", width / 2)
+      .attr("y", -10)
+      .attr("text-anchor", "middle")
+      .style("font-size", "20px")
+      .text(`Median ${field.replaceAll("_", " ")}`);
+}
+
+// Triggers
+document.getElementById("fieldSelect").addEventListener("change", function () {
+  loadChart(this.value);
+});
+
+document.getElementById("limitSelect").addEventListener("change", function () {
+  loadChart(document.getElementById("fieldSelect").value);
+});
+
+// Initial load
+document.addEventListener("DOMContentLoaded", () => {
+  loadChart("price");
+});
+</script>
+
 {% endblock %}
