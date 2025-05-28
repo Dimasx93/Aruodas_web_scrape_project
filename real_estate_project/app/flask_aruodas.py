@@ -128,15 +128,14 @@ def search_properties():
 @login_required
 def analyze_selected_median():
     data = request.get_json()
-
     field = data.get("field")
-    query = data.get("query", {})
     city_filter = data.get("city")
-    limit = data.get("limit", 0)
+    limit = int(data.get("limit", 0))
 
     if field not in {"price", "size_m2", "price_per_m2", "number_of_rooms"}:
         return jsonify({"error": "Invalid field"}), 400
 
+    query = {}
     if city_filter:
         query["city"] = city_filter
 
@@ -154,13 +153,12 @@ def analyze_selected_median():
         .rename(columns={field: "value"})
     )
 
-    if limit > 0 and len(medians) > limit * 2:
+    if limit > 0 and len(medians) > limit * 2 and not city_filter:
         top = medians.head(limit)
         bottom = medians.tail(limit)
         medians = pd.concat([top, bottom])
 
     return jsonify(medians.to_dict(orient="records"))
-
 
 
 @app.route("/save_search", methods=["POST"])
@@ -238,7 +236,6 @@ def autocomplete_city():
     return jsonify([{"id": city, "text": city} for city in sorted(cities)])
 
 
-
 @app.route("/autocomplete/district", methods=["GET"])
 @login_required
 def autocomplete_district():
@@ -247,15 +244,13 @@ def autocomplete_district():
     if not city:
         return jsonify([])
 
-    # Find distinct districts within the given city and starting with query
-    pipeline = [
-        {"$match": {"city": {"$regex": f"^{city}$", "$options": "i"},
-                    "district": {"$regex": f"^{q}", "$options": "i"}}},
-        {"$group": {"_id": "$district"}},
-        {"$limit": 10}
-    ]
-    districts = [d["_id"] for d in mongo.db.properties.aggregate(pipeline)]
-    return jsonify(districts)
+    # Filter districts by city and optional term
+    districts = mongo.db.properties.distinct("district", {
+        "city": city,
+        "district": {"$regex": f"^{q}", "$options": "i"}
+    })
+
+    return jsonify([{"id": d, "text": d} for d in sorted(districts)])
 
 
 @app.route("/analysis_page")

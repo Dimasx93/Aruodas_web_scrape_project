@@ -13,10 +13,18 @@
     {{ form.hidden_tag() }}
 
     <label for="city">City:</label>
-    <select id="city" name="city" style="width: 100%;"></select>
+    <select id="city" name="city" class="select2-field" style="width: 100%;">
+      {% if selected_city %}
+        <option value="{{ selected_city }}" selected>{{ selected_city }}</option>
+      {% endif %}
+    </select>
 
     <label for="district">District:</label>
-    <select id="district" name="district" style="width: 100%;"></select>
+    <select id="district" name="district" class="select2-field" style="width: 100%;">
+      {% if selected_district %}
+        <option value="{{ selected_district }}" selected>{{ selected_district }}</option>
+      {% endif %}
+    </select>
 
     {{ form.price_min.label }} {{ form.price_min }}<br>
     {{ form.price_max.label }} {{ form.price_max }}<br>
@@ -28,14 +36,12 @@
     {{ form.submit }}
 </form>
 
-<!-- Save Search UI -->
 <hr>
 <h3>Save This Search</h3>
 <label for="searchName">Search Name:</label>
 <input type="text" id="searchName" placeholder="e.g. Cheap in Vilnius">
 <button id="saveSearchBtn">Save Search</button>
 
-<!-- Analyze Median -->
 <hr>
 <h3>Analyze Median Value</h3>
 <label for="fieldSelect">Select field:</label>
@@ -47,12 +53,9 @@
 </select>
 <button id="analyzeBtn">Show Result</button>
 
-<!-- JavaScript -->
 <script>
 document.getElementById('analyzeBtn').addEventListener('click', () => {
   const field = document.getElementById('fieldSelect').value;
-
-  // You can add your query filters here if needed, or just send empty object
   const query = {};
 
   fetch('/analyze_median', {
@@ -70,11 +73,8 @@ document.getElementById('analyzeBtn').addEventListener('click', () => {
     return response.json();
   })
   .then(data => {
-    // Save the median data and selected field in sessionStorage to pass to analysis page
     sessionStorage.setItem('medianData', JSON.stringify(data));
     sessionStorage.setItem('medianField', field);
-
-    // Redirect to analysis page (adjust URL if needed)
     window.location.href = "{{ url_for('analysis_page') }}";
   })
   .catch(err => {
@@ -84,8 +84,6 @@ document.getElementById('analyzeBtn').addEventListener('click', () => {
 });
 </script>
 
-
-<!-- Show Results -->
 {% if results %}
 <h3>Results:</h3>
 <ul>
@@ -100,80 +98,82 @@ document.getElementById('analyzeBtn').addEventListener('click', () => {
 </ul>
 {% endif %}
 
-<!-- JavaScript -->
 <script>
 $(document).ready(function() {
+  function initCitySelect() {
     $('#city').select2({
-        placeholder: 'Select a city',
-        ajax: {
-            url: '/autocomplete/city',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { q: params.term };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.map(function (item) {
-                        return { id: item, text: item };
-                    })
-                };
-            }
+      placeholder: 'Select a city',
+      allowClear: true,
+      ajax: {
+        url: '/autocomplete/city',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return { q: params.term };
+        },
+        processResults: function (data) {
+          return {
+            results: data.map(item => ({ id: item.text || item, text: item.text || item }))
+          };
         }
+      }
     });
+  }
 
+  function initDistrictSelect() {
     $('#district').select2({
-        placeholder: 'Select a district',
-        ajax: {
-            url: '/autocomplete/district',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    q: params.term,
-                    city: $('#city').val()
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.map(function (item) {
-                        return { id: item, text: item };
-                    })
-                };
-            }
+      placeholder: 'Select a district',
+      allowClear: true,
+      ajax: {
+        url: '/autocomplete/district',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term,
+            city: $('#city').val()
+          };
+        },
+        processResults: function (data) {
+          return {
+            results: data.map(item => ({ id: item.text || item, text: item.text || item }))
+          };
         }
+      }
     });
+  }
 
-    // Reset district when city changes
-    $('#city').on('change', function () {
-        $('#district').val(null).trigger('change');
-    });
+  initCitySelect();
+  initDistrictSelect();
 
-    // Save search
-    document.getElementById("saveSearchBtn").addEventListener("click", function () {
-        const name = document.getElementById("searchName").value;
-        const query = {{ query | tojson | safe }};
-        if (!name) {
-            alert("Please provide a name for the search.");
-            return;
-        }
-        fetch("/save_search", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({ name: name, query: query })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message || "Search saved!");
-        })
-        .catch(error => {
-            alert("Error saving search.");
-            console.error(error);
-        });
+  $('#city').on('change', function () {
+    $('#district').val(null).trigger('change');
+  });
+
+  document.getElementById("saveSearchBtn").addEventListener("click", function () {
+    const name = document.getElementById("searchName").value;
+    const query = {{ query | tojson | safe }};
+    if (!name) {
+      alert("Please provide a name for the search.");
+      return;
+    }
+    fetch("/save_search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({ name: name, query: query })
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert(data.message || "Search saved!");
+    })
+    .catch(error => {
+      alert("Error saving search.");
+      console.error(error);
     });
+  });
 });
 </script>
 
