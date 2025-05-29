@@ -11,8 +11,14 @@
 </head>
 
 <body>
-
-    <div class="navbar">
+    <nav class="navbar">
+      <input type="checkbox" id="menu-toggle">
+      <label for="menu-toggle" class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+    <div class="menu">
         <a class="{% if active == 'index' %}active{% endif %}" href="{{ url_for('index') }}">Home</a>
         {% if current_user.is_authenticated %}
         <a href="{{ url_for('search_properties') }}">Search</a>
@@ -24,6 +30,7 @@
         <a href="{{ url_for('login') }}">Login</a>
         {% endif %}
     </div>
+    </nav>
 
     {% block content %}
     {% endblock %}

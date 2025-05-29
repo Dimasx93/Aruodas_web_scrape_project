@@ -13,14 +13,14 @@
     {{ form.hidden_tag() }}
 
     <label for="city">City:</label>
-    <select id="city" name="city" class="select2-field" style="width: 100%;">
+    <select id="city" name="city" class="select2-field" style="width: 40%;">
       {% if selected_city %}
         <option value="{{ selected_city }}" selected>{{ selected_city }}</option>
       {% endif %}
     </select>
 
     <label for="district">District:</label>
-    <select id="district" name="district" class="select2-field" style="width: 100%;">
+    <select id="district" name="district" class="select2-field" style="width: 40%;">
       {% if selected_district %}
         <option value="{{ selected_district }}" selected>{{ selected_district }}</option>
       {% endif %}
