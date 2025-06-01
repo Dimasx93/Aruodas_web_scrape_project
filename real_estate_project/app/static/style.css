@@ -1,8 +1,13 @@
 /* style.css */
 
+html {
+  width: 100%;
+}
+
 body {
     margin: 0;
     padding: 0;
+    width: 100%;
     background-color: #ffffff;
     min-height: 100vh;
     overflow-x: hidden;
@@ -24,6 +29,8 @@ body {
 
 /* Navbar Styling */
 .navbar {
+    width: 100%;
+    max-width: 100%;
     background-color: #1f2937;
     padding: 12px 24px;
     display: flex;
@@ -31,9 +38,6 @@ body {
     align-items: center;
     justify-content: space-between;
     position: relative;
-}
-
-.navbar {
     font-size: 1.2rem;
     font-weight: bold;
     color: #f3f4f6;

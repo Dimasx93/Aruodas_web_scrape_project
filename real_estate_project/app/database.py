@@ -2,7 +2,7 @@
 from flask import Flask
 from flask_login import UserMixin
 
-from extensions import login_manager, mongo, bcrypt, csrf
+from .extensions import login_manager, mongo, bcrypt, csrf
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
