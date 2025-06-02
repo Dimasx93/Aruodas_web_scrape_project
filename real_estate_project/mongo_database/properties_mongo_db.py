@@ -15,13 +15,13 @@ if collection_name in existing_collections:
     db.command(
         "collMod",
         collection_name,
-        validator={"$jsonSchema": properties_validation_rules["$jsonSchema"]}
+        validator= properties_validation_rules
     )
     print(f"Schema validation applied to existing collection '{collection_name}'.")
 else:
     db.create_collection(
         collection_name,
-        validator={"$jsonSchema": properties_validation_rules["$jsonSchema"]}
+        validator= properties_validation_rules
     )
     print(f"Collection '{collection_name}' created with schema validation.")
 
@@ -41,13 +41,13 @@ if saved_search_collection_name in existing_collections:
     db.command(
         "collMod",
         saved_search_collection_name,
-        validator={"$jsonSchema": saved_search_schema}
+        validator= saved_search_schema
     )
     print(f"Schema validation applied to existing collection '{saved_search_collection_name}'.")
 else:
     db.create_collection(
         saved_search_collection_name,
-        validator={"$jsonSchema": saved_search_schema}
+        validator= saved_search_schema
     )
     print(f"Collection '{saved_search_collection_name}' created with schema validation.")
 

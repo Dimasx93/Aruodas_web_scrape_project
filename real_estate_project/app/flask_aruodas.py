@@ -1,14 +1,12 @@
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
-from forms import RegisterForm, LoginForm, PropertySearchForm
-from database import app, mongo, bcrypt, collection, User
+from .forms import RegisterForm, LoginForm, PropertySearchForm
+from .database import app, mongo, bcrypt, User
 import pandas as pd
 import matplotlib
 
 matplotlib.use('Agg')  # Use non-GUI backend suitable for scripts/web apps
-import matplotlib.pyplot as plt
-import io
-import base64
+
 from flask_wtf.csrf import generate_csrf
 import json
 from datetime import datetime
@@ -140,10 +138,11 @@ def analyze_selected_median():
         query["city"] = city_filter
 
     cursor = mongo.db.properties.find(query, {"_id": 0, field: 1, "city": 1})
-    df = pd.DataFrame(list(cursor)).dropna(subset=[field])
-
-    if df.empty:
+    df = pd.DataFrame(list(cursor))
+    if df.empty or field not in df.columns:
         return jsonify([])
+
+    df = df.dropna(subset=[field])
 
     medians = (
         df.groupby("city")[field]
@@ -217,7 +216,7 @@ def rerun_saved_search():
 def delete_search(search_id):
     result = mongo.db.saved_searches.delete_one({
         "_id": ObjectId(search_id),
-        "user_id": current_user.id  # ensure users can only delete their own
+        "user_id": str(current_user.id)  # ensure users can only delete their own
     })
 
     if result.deleted_count:
@@ -264,3 +263,4 @@ if __name__ == '__main__':
 
 # Show more info about the ads ie URL, pictures, saves the search, mark favourites, interactive graphics? d3.js JavaScript,
 # search for specific city (like drop menu, or filter for non LT keyboard) for graphic or make it top last 5/10,
+#If time permits, implement email field, user and pwrd min characters, new page to show search results
