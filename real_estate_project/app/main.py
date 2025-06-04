@@ -1,3 +1,5 @@
+#flask_aruodas.py
+
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
 from .forms import RegisterForm, LoginForm, PropertySearchForm
@@ -34,6 +36,9 @@ def logout():
 def register_user():
     form = RegisterForm()
     users_collection = mongo.db.users
+
+    if request.method == "POST":
+        print("Form Errors:", form.errors)
 
     if form.validate_on_submit():
         username = form.username.data
@@ -261,6 +266,7 @@ def analysis_page():
 if __name__ == '__main__':
     app.run(debug=True)
 
-# Show more info about the ads ie URL, pictures, saves the search, mark favourites, interactive graphics? d3.js JavaScript,
-# search for specific city (like drop menu, or filter for non LT keyboard) for graphic or make it top last 5/10,
-#If time permits, implement email field, user and pwrd min characters, new page to show search results
+#If time permits, implement email field
+
+
+#USE THIS TO RUN python -m app.main from real_estate_project dir

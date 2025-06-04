@@ -1,13 +1,33 @@
 # forms.py
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField
-from wtforms.validators import DataRequired, Length, Optional, NumberRange
+from wtforms.validators import DataRequired, Length, Optional, NumberRange, Regexp
 from wtforms.widgets import TextInput
 
 
 class RegisterForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=20)])
-    password = PasswordField('Password', validators=[DataRequired()])
+    username = StringField(
+        'Username',
+        validators=[
+            DataRequired(),
+            Length(min=3, max=20, message="Username must be between 3 and 20 characters.")
+        ]
+    )
+
+    password = PasswordField(
+        'Password',
+        validators=[
+            DataRequired(),
+            Length(min=8, message= "Password must be at least 8 characters."),
+            Regexp(
+                r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$',
+                message=(
+                    "Password must include at least one lowercase letter, one uppercase letter, "
+                    "one digit, and one special character (@$!%*?&)."
+                )
+            )
+        ]
+    )
     submit = SubmitField('Register')
 
 

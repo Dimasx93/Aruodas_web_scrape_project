@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from schema_validation import properties_validation_rules, saved_search_schema
+from .schema_validation import properties_validation_rules, saved_search_schema
 from datetime import datetime
 
 # Connect to MongoDB

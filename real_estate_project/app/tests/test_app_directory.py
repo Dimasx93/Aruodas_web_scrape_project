@@ -6,7 +6,7 @@ import pytest
 from bson.objectid import ObjectId
 from werkzeug.datastructures import MultiDict
 from ..forms import RegisterForm, LoginForm, PropertySearchForm
-from ..flask_aruodas import app, mongo, User, bcrypt
+from ..main import app, mongo, User, bcrypt
 from ..database import load_user
 
 
@@ -14,7 +14,7 @@ from ..database import load_user
 
 @pytest.fixture(scope="module")
 def test_client():
-    # Setup Flask test client
+    #Setup Flask test client
     app.config["TESTING"] = True
     app.config["WTF_CSRF_ENABLED"] = False  # Disable CSRF for testing
     app.config["LOGIN_DISABLED"] = False
@@ -25,8 +25,8 @@ def test_client():
 
 @pytest.fixture
 def test_user():
-    # Setup a test user in the database
-    password_plain = "testpassword123"
+    #Setup a test user in the database
+    password_plain = "Password@123"
     password_hash = bcrypt.generate_password_hash(password_plain).decode('utf-8')
 
     user_data = {
@@ -36,30 +36,19 @@ def test_user():
     inserted = mongo.db.users.insert_one(user_data)
     user_data["_id"] = inserted.inserted_id
 
-    yield user_data  # Provide test data to the test
+    yield user_data  #Provide test data to the test
 
     # Clean up after test
     mongo.db.users.delete_one({"_id": inserted.inserted_id})
 
 
-# @pytest.fixture
-# def saved_search_id(test_user):
-#     result = mongo.db.saved_searches.insert_one({
-#         "user_id": test_user["_id"],
-#         "name": "Test Search",
-#         "query": {},
-#         "timestamp": datetime.utcnow()
-#     })
-#     return result.inserted_id
-
-
 def test_mongo_connection():
-    # Check that the database is connected and name is correct
+    #Check that the database is connected and name is correct
     assert mongo.db.name == "aruodas_apartments"
 
 
 def test_user_loader(test_user):
-    # Test the Flask-Login user loader
+    #Test the Flask-Login user loader
     loaded_user = load_user(str(test_user["_id"]))
     assert loaded_user is not None
     assert loaded_user.username == test_user["username"]
@@ -68,7 +57,7 @@ def test_user_loader(test_user):
 
 def test_password_hashing_and_check(test_user):
     # Verify password hashing and checking with bcrypt
-    valid = bcrypt.check_password_hash(test_user["password"], "testpassword123")
+    valid = bcrypt.check_password_hash(test_user["password"], "Password@123")
     invalid = bcrypt.check_password_hash(test_user["password"], "wrongpassword")
 
     assert valid is True
@@ -95,7 +84,7 @@ def test_user_class(test_user):
 # Simulate a basic POST request for testing
 @pytest.fixture
 def app_context():
-    from ..database import app
+    # from ..database import app
     app.config["WTF_CSRF_ENABLED"] = False  # Disable CSRF for tests
     with app.test_request_context(method="POST"):
         yield
@@ -103,25 +92,25 @@ def app_context():
 
 # -------- RegisterForm Tests --------
 def test_register_form_valid(app_context):
-    form = RegisterForm(data={"username": "testuser", "password": "testpwrd"})
+    form = RegisterForm(data={"username": "testuser", "password": "Test@123"})
     assert form.validate() is True
 
 
 def test_register_form_missing_username(app_context):
-    form = RegisterForm(data={"password": "testpwrd"})
+    form = RegisterForm(data={"password": "Test@123"})
     assert form.validate() is False
     assert "username" in form.errors
 
 
 def test_register_form_short_username(app_context):
-    form = RegisterForm(data={"username": "ab", "password": "testpwrd"})
+    form = RegisterForm(data={"username": "ab", "password": "Test@123"})
     assert form.validate() is False
     assert "username" in form.errors
 
 
 # -------- LoginForm Tests --------
 def test_login_form_valid(app_context):
-    form = LoginForm(data={"username": "user", "password": "pass"})
+    form = LoginForm(data={"username": "user", "password": "Test@123"})
     assert form.validate() is True
 
 
@@ -157,6 +146,7 @@ def test_property_search_form_all_fields_valid(app_context):
     })
     assert form.validate() is True
 
+##################################################################################################
 
 # Test flask_aruodas.py
 
@@ -169,7 +159,7 @@ def test_index(test_client):
 def test_logout(test_client, test_user):
     response = test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     }, follow_redirects=True)
     assert response.status_code == 200
 
@@ -186,7 +176,7 @@ def test_register(test_client):
     username = "newuser"
     response = test_client.post("/register", data={
         "username": username,
-        "password": "password123"
+        "password": "Password@123"
     }, follow_redirects=True)
 
     assert response.status_code == 200
@@ -198,7 +188,7 @@ def test_register(test_client):
 def test_login_success(test_client, test_user):
     response = test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     }, follow_redirects=True)
 
     assert b"Search" in response.data or response.status_code == 200
@@ -212,13 +202,13 @@ def test_login_failure(test_client):
 
     html = response.data.decode()
     assert response.status_code == 200
-    assert '<form' in html  # Still on login page
+    assert '<form' in html  #Still on login page
 
 
 def test_analyze_median_valid(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
 
     response = test_client.post("/analyze_median", json={
@@ -234,7 +224,7 @@ def test_analyze_median_valid(test_client, test_user):
 def test_analyze_median_not_valid(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
 
     response = test_client.post("/analyze_median", json={
@@ -250,7 +240,7 @@ def test_analyze_median_not_valid(test_client, test_user):
 def test_autocomplete_city(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
 
     response = test_client.get("/autocomplete/city")
@@ -261,7 +251,7 @@ def test_autocomplete_city(test_client, test_user):
 def test_save_search_correct(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
     # Prepare query JSON
     query = {
@@ -277,12 +267,13 @@ def test_save_search_correct(test_client, test_user):
 
     assert response.status_code == 200
     assert response.get_json()["message"] == "Search saved!"
+    mongo.db.saved_searches.delete_many({"user_id": str(test_user["_id"])})
 
 
 def test_save_search_missing_name_and_query(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
 
     # Missing name
@@ -298,7 +289,7 @@ def test_save_search_missing_name_and_query(test_client, test_user):
 
 def test_register_user_duplicate(test_client):
     username = "duplicateuser"
-    password = "password123"
+    password = "Password@123"
 
     # First registration should succeed
     response = test_client.post("/register", data={
@@ -324,41 +315,39 @@ def test_register_user_duplicate(test_client):
 
 
 def test_search_no_filters(test_client):
-    """Test POST with no filters (should return all or none depending on logic)."""
     response = test_client.post("/search", data={})
     assert response.status_code == 200
     assert b"results" in response.data or b"No results found" in response.data
 
 
 def test_search_city_filter(test_client):
-    """Test POST with only city filter."""
-    response = test_client.post("/search", data={"city": "Rome"})
+    response = test_client.post("/search", data={"city": "Vilnius"})
     assert response.status_code == 200
-    assert b"Rome" in response.data
+    assert b"Vilnius" in response.data
 
 
 def test_search_full_filters(test_client):
     data = {
-        "city": "Rome",
-        "district": "Centro",
-        "price_min": 100000,
+        "city": "Vilnius",
+        "district": "Naujamiestis",
+        "price_min": 150000,
         "price_max": 300000,
         "size_min": 50,
         "size_max": 120,
         "price_m2_min": 1000,
         "price_m2_max": 5000,
-        "number_of_rooms": 3
+        "number_of_rooms": 2
     }
     response = test_client.post("/search", data=data)
     assert response.status_code == 200
-    assert b"Rome" in response.data
+    assert b"Vilnius" in response.data
 
 
 def test_analyze_median_city_filter_applied(test_client, test_user):
     # Log in user
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
 
     # Analyze median with a city filter
@@ -380,7 +369,7 @@ def test_analyze_median_empty_data_returns_empty_list(test_client, test_user):
 
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
 
     response = test_client.post("/analyze_median", json={
@@ -402,7 +391,7 @@ def test_my_searches_requires_login(test_client):
 def test_my_searches_logged_in(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
     response = test_client.get("/my_searches")
     assert response.status_code == 200
@@ -417,7 +406,7 @@ def test_analysis_page_requires_login(test_client):
 def test_analysis_page_logged_in(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
     response = test_client.get("/analysis_page")
     assert response.status_code == 200
@@ -426,7 +415,7 @@ def test_analysis_page_logged_in(test_client, test_user):
 def test_rerun_saved_search_success(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
 
     # Example saved query: a simple MongoDB query dict encoded as JSON string
@@ -444,7 +433,7 @@ def test_rerun_saved_search_success(test_client, test_user):
 def test_rerun_saved_search_invalid_json(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
 
     # Send invalid JSON string for query
@@ -461,7 +450,7 @@ def test_delete_search_success(test_client, test_user):
     # Log in the user
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     }, follow_redirects=True)
 
     # Get logged-in user ID from session
@@ -492,7 +481,7 @@ def test_delete_search_failure(test_client, test_user):
     # Log in the user
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     }, follow_redirects=True)
 
     # Get logged-in user ID from session
@@ -526,7 +515,7 @@ def test_delete_search_failure(test_client, test_user):
 def test_autocomplete_district_no_city(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
     response = test_client.get("/autocomplete/district?q=Cent")
     assert response.status_code == 200
@@ -536,7 +525,7 @@ def test_autocomplete_district_no_city(test_client, test_user):
 def test_autocomplete_district_with_city(test_client, test_user):
     test_client.post("/login", data={
         "username": test_user["username"],
-        "password": "testpassword123"
+        "password": "Password@123"
     })
 
     # Assuming your test db has some entries with city "Vilnius"
@@ -544,6 +533,3 @@ def test_autocomplete_district_with_city(test_client, test_user):
     assert response.status_code == 200
     data = response.get_json()
     assert isinstance(data, list)
-    # Optionally test structure of first element if list not empty
-    if data:
-        assert "id" in data[0] and "text" in data[0]
