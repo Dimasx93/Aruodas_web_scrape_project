@@ -23,7 +23,7 @@ A Flask-based web application that scrapes apartment listings from Aruodas.lt, s
 
 ## 🛠️ Technologies Used
 
-##Tech	- Purpose
+#Tech	- Purpose
 
 Flask -	Web framework
 
