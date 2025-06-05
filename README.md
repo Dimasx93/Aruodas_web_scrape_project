@@ -97,12 +97,16 @@ LinkedIn: https://www.linkedin.com/in/stefano-di-mauro-132620190/
 1. Clone the repo:
 
 git clone https://github.com/Dimasx93/Aruodas_web_scrape_project.git
+
 cd Aruodas_web_scrape_project
 
 2. (Optional) Create a virtual environment:
 
 python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
+
+source venv/bin/activate 
+
+On Windows use: venv\Scripts\activate
 
 3. Install all dependencies:
 
