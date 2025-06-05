@@ -1,7 +1,10 @@
-🏡 Aruodas Apartment Analytics Web App
-A Flask-based web application that scrapes apartment listings from Aruodas.lt, stores them in a MongoDB database, and provides users with a way to search listings, view individual properties, and analyze market trends like average or median prices.
+# 🏡 Aruodas Apartment Analytics Web App
 
-🚀 Features
+
+A Flask-based web application that scrapes apartment listings from Aruodas.lt, stores them in a MongoDB database, and provides users with a way to search listings, view individual properties, and analyze market trends like average or median prices.
+ 
+
+## 🚀 Features
 
 🕸️ Web Scraping: Collects apartment data from aruodas.lt
 
@@ -17,7 +20,9 @@ A Flask-based web application that scrapes apartment listings from Aruodas.lt, s
 
 🌐 Responsive UI: Easy-to-use web interface
 
-#🛠️ Technologies Used
+
+## 🛠️ Technologies Used
+
 Tech	- Purpose
 Flask -	Web framework
 Flask-Login	- User session management
@@ -30,8 +35,11 @@ BeautifulSoup	- HTML parsing
 Pytest	- Testing
 WTForms	- Form validation
 
-📦 Installation
-git clone https://github.com/Dimasx93/Aruodas_web_scrape_project.git
+
+## 🔗 Links
+Project repo: https://github.com/Dimasx93/Aruodas_web_scrape_project.git
+
+My Portfolio: https://dimasx93.github.io/Portfolio/
 
 📂 Project Structure
 
