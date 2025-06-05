@@ -51,6 +51,10 @@ Project repo: https://github.com/Dimasx93/Aruodas_web_scrape_project.git
 
 My Portfolio: https://dimasx93.github.io/Portfolio/
 
+GitHub: https://github.com/Dimasx93
+
+LinkedIn: https://www.linkedin.com/in/stefano-di-mauro-132620190/
+
 📂 Project Structure
 
 <pre>Aruodas_web_scrape_project/
@@ -88,4 +92,23 @@ My Portfolio: https://dimasx93.github.io/Portfolio/
 ├── requirements.txt            # Python dependencies
 └── README.md # Project overview and usage instructions </pre>
  
+## 📦Installation
+
+1. Clone the repo:
+
+git clone https://github.com/Dimasx93/Aruodas_web_scrape_project.git
+cd Aruodas_web_scrape_project
+
+2. (Optional) Create a virtual environment:
+
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+
+3. Install all dependencies:
+
+pip install -r requirements.txt
+
+4. Run the app:
+
+python app/main.py
 
