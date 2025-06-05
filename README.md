@@ -119,5 +119,5 @@ pip install -r requirements.txt
 ### 4. Run the app:
 
 
-python app/main.py
+python -m app.main
 
