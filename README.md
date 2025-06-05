@@ -24,15 +24,25 @@ A Flask-based web application that scrapes apartment listings from Aruodas.lt, s
 ## 🛠️ Technologies Used
 
 Tech	- Purpose
+
 Flask -	Web framework
+
 Flask-Login	- User session management
+
 Flask-WTF	- Form handling + CSRF
+
 Flask-Bcrypt	- Password hashing
+
 Flask-PyMongo	- MongoDB integration
+
 MongoDB	- Data storage
+
 Selenium	- Web scraping
+
 BeautifulSoup	- HTML parsing
+
 Pytest	- Testing
+
 WTForms	- Form validation
 
 
