@@ -35,7 +35,39 @@ git clone https://github.com/Dimasx93/Aruodas_web_scrape_project.git
 
 📂 Project Structure
 
-Aruodas_web_scrape_project/
-<pre> Aruodas_web_scrape_project/ ├── app/ # Flask web app (UI, routes, forms) │ ├── static/ │ │ └── style.css │ ├── templates/ # Jinja2 HTML templates │ │ ├── base.html │ │ ├── index.html │ │ ├── login.html │ │ ├── register.html │ │ ├── search.html │ │ ├── analysis.html │ │ └── my_searches.html │ ├── __init__.py # Optional if turning `app/` into a package │ ├── main.py # Flask app routes and logic │ ├── forms.py # WTForms for registration/search │ ├── db_init.py # MongoDB init & user model │ ├── extensions.py # Flask extensions setup (bcrypt, login_manager, csrf, etc.) │ └── tests/ │ ├── __init__.py │ └── test_webapp.py # Your web app-specific tests │ ├── scraper/ # Web scraping & DB logic │ ├── __init__.py │ ├── aruodas_scraper.py # BeautifulSoup/Selenium scraper for aruodas.lt │ ├── property_storage.py # MongoDB functions (insert/find properties) │ ├── schema_validation.py # JSON schema for property validation │ └── tests/ │ ├── __init__.py │ └── test_scraper.py # Scraper-specific tests │ ├── .coverage # Code coverage file ├── requirements.txt # Python dependencies └── README.md # Project overview and usage instructions </pre>
+<pre>Aruodas_web_scrape_project/
+│
+├── app/                        # Flask web app (UI, routes, forms)
+│   ├── static/
+│   │   └── style.css
+│   ├── templates/              # Jinja2 HTML templates
+│   │   ├── base.html
+│   │   ├── index.html
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   ├── search.html
+│   │   ├── analysis.html
+│   │   └── my_searches.html
+│   ├── __init__.py             # Optional if turning `app/` into a package
+│   ├── main.py                 # Flask app routes and logic
+│   ├── forms.py                # WTForms for registration/search
+│   ├── db_init.py              # MongoDB init & user model
+│   ├── extensions.py           # Flask extensions setup (bcrypt, login_manager, csrf, etc.)
+│   └── tests/
+│       ├── __init__.py
+│       └── test_webapp.py      # Your web app-specific tests
+│
+├── scraper_mongodb/                    # Web scraping & DB logic
+│   ├── __init__.py
+│   ├── aruodas_scraper.py      # BeautifulSoup/Selenium scraper for aruodas.lt
+│   ├── properties_mongo_db.py  # MongoDB functions (insert/find properties)
+│   ├── schema_validation.py    # JSON schema for property validation
+│   └── tests/
+│       ├── __init__.py
+│       └── test_scraper.py     # Scraper-specific tests
+│
+├── .coverage                   # Code coverage file
+├── requirements.txt            # Python dependencies
+└── README.md # Project overview and usage instructions </pre>
  
 
