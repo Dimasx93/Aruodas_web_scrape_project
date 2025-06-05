@@ -94,13 +94,16 @@ LinkedIn: https://www.linkedin.com/in/stefano-di-mauro-132620190/
  
 ## 📦Installation
 
-1. Clone the repo:
+
+### 1. Clone the repo:
+
 
 git clone https://github.com/Dimasx93/Aruodas_web_scrape_project.git
 
 cd Aruodas_web_scrape_project
 
-2. (Optional) Create a virtual environment:
+### 2. (Optional) Create a virtual environment:
+
 
 python -m venv venv
 
@@ -108,11 +111,13 @@ source venv/bin/activate
 
 On Windows use: venv\Scripts\activate
 
-3. Install all dependencies:
+### 3. Install all dependencies:
+
 
 pip install -r requirements.txt
 
-4. Run the app:
+### 4. Run the app:
+
 
 python app/main.py
 
