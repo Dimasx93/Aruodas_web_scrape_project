@@ -143,6 +143,7 @@ form label {
 
 form input[type="text"],
 form input[type="number"],
+form input[type="password"],
 form select {
     width: 100%;
     max-width: 400px;

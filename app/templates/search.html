@@ -12,7 +12,7 @@
 <form method="POST">
     {{ form.hidden_tag() }}
 
-    <label for="city">City:</label>
+    <label for="city">Region:</label>
     <select id="city" name="city" class="select2-field" style="width: 40%;">
       {% if selected_city %}
         <option value="{{ selected_city }}" selected>{{ selected_city }}</option>
