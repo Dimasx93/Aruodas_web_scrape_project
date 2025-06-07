@@ -24,7 +24,7 @@
         <a href="{{ url_for('search_properties') }}">Search</a>
         <a href="{{ url_for('my_searches') }}">Saved Searches</a>
         <a href="{{ url_for('logout') }}">Logout</a>
-        <span style="float:right; color:white; margin: 15px;">Hello, {{ current_user.username }}!</span>
+        <span>Hello, {{ current_user.username }}!</span>
         {% else %}
         <a href="{{ url_for('register_user') }}">Register</a>
         <a href="{{ url_for('login') }}">Login</a>
@@ -34,6 +34,19 @@
 
     {% block content %}
     {% endblock %}
+
+<script>
+  const checkbox = document.getElementById('menu-toggle');
+  const welcomeText = document.getElementById('welcome-text');
+
+  checkbox.addEventListener('change', function () {
+    if (this.checked) {
+      welcomeText.style.display = 'none';
+    } else {
+      welcomeText.style.display = 'block';
+    }
+  });
+</script>
 
 </body>
 
