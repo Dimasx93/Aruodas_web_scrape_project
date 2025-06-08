@@ -6,19 +6,22 @@ A Flask-based web application that scrapes apartment listings from Aruodas.lt, s
 
 ## 🚀 Features
 
-🕸️ Web Scraping: Collects apartment data from aruodas.lt
+### 🚀 Features
 
-🧾 MongoDB Storage: Efficient NoSQL storage of listings and user data
+- 🕸️ **Web Scraping** – Collect apartment data from Aruodas.lt using Selenium & BeautifulSoup
+  
+- 🧾 **MongoDB Storage** – Efficient NoSQL storage of listings and user data
+  
+- 🔍 **Advanced Search** – Filter apartments by region, district, price, size, and more
+  
+- 📊 **Market Insights** – Visualize median and average prices across listings
+  
+- 🔐 **User Authentication** – Register, log in, and securely save searches
+  
+- 🧠 **WTForms Validation** – Strong backend validation with feedback
+   
+- 🌐 **Responsive UI** – Clean and usable interface on desktop and mobile  
 
-🔍 Search Functionality: Filter apartments by price, size, location, etc.
-
-📊 Market Insights: View calculated median and average prices across listings
-
-🔐 User Auth: Register, log in, and save searches securely
-
-🧠 Form Validation: Strong backend validation of input via WTForms
-
-🌐 Responsive UI: Easy-to-use web interface
 
 
 ## 🛠️ Technologies Used
@@ -47,15 +50,16 @@ WTForms	- Form validation
 
 
 ## 🔗 Links
-Project repo: https://github.com/Dimasx93/Aruodas_web_scrape_project.git
+### 🔗 Project Links
 
-My Portfolio: https://dimasx93.github.io/Portfolio/
+- 🔧 [GitHub Repo](https://github.com/Dimasx93/Aruodas_web_scrape_project)
+  
+- 🧑‍💻 [My Portfolio](https://dimasx93.github.io/Portfolio/)
+  
+- 📽️ [Video Demo](https://youtu.be/XOjyN4PEl7k)
+  
+- 💼 [LinkedIn](https://www.linkedin.com/in/stefano-di-mauro-132620190/)
 
-GitHub: https://github.com/Dimasx93
-
-LinkedIn: https://www.linkedin.com/in/stefano-di-mauro-132620190/
-
-Video tutorial: https://youtu.be/XOjyN4PEl7k
 
 📂 Project Structure
 
@@ -125,25 +129,26 @@ python -m app.main
 
 ## Screenshots
 
-## Main page
+Main page
 ![Image](https://github.com/user-attachments/assets/eb1b905b-e544-4615-9949-00557d46c81b)
 
-## If the length of the user or password is not in the min of WTF forms you'll get an error message. (img1)
-## Or if the password does not have the minimum requirements, you will also get an error message. (img2)
+If the length of the user or password is not in the min of WTF forms you'll get an error message. (img1)
+Or if the password does not have the minimum requirements, you will also get an error message. (img2)
 
 ![Image](https://github.com/user-attachments/assets/68bbcd8b-508b-45a0-b18d-d0bb3ce88e8c)
 
 ![Image](https://github.com/user-attachments/assets/27d9f7c9-5527-4066-938f-25f565eda8f6)
 
-## You can search using a dropdown for Region field and District.
+You can search using a dropdown for Region field and District.
 
 ![Image](https://github.com/user-attachments/assets/e4cbecce-cb58-4118-82a2-45ef334f7404)
+
 ![Image](https://github.com/user-attachments/assets/205d715e-61f5-410b-b97e-b03856ae82d9)
 
-## You can also save a search for the future and or delete. 
+You can also save a search for the future and or delete. 
 
 ![Image](https://github.com/user-attachments/assets/73a633d5-0594-47b7-9cdf-89128a1ae557)
 
-## Also you can look up at median values such as Price, Size and more, for top/bottom Regions, or you can look at all of them, or at just a single one.
+Also you can look up at median values such as Price, Size and more, for top/bottom Regions, or you can look at all of them, or at just a single one.
 
 ![Image](https://github.com/user-attachments/assets/db3a7248-55cd-48e7-b12f-5a5fb7c06337)
