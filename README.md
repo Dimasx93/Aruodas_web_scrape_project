@@ -6,7 +6,6 @@ A Flask-based web application that scrapes apartment listings from Aruodas.lt, s
 
 ## 🚀 Features
 
-### 🚀 Features
 
 - 🕸️ **Web Scraping** – Collect apartment data from Aruodas.lt using Selenium & BeautifulSoup
   
@@ -49,8 +48,7 @@ Pytest	- Testing
 WTForms	- Form validation
 
 
-## 🔗 Links
-### 🔗 Project Links
+## 🔗 Project Links
 
 - 🔧 [GitHub Repo](https://github.com/Dimasx93/Aruodas_web_scrape_project)
   
