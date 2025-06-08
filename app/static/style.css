@@ -168,10 +168,10 @@ form label {
   color: #374151;
 }
 
-form input[type="text"],
+input[type="text"],
 form input[type="number"],
 form input[type="password"],
-form select {
+select {
   width: 100%;
   max-width: 400px;
   padding: 10px;
@@ -235,4 +235,37 @@ input[type="submit"]:hover {
   background-color: #fee2e2; /* light red background */
   color: #991b1b; /* dark red text */
   border: 1px solid #fca5a5;
+}
+
+/* Search Results List */
+.search-results {
+  list-style: none;
+  padding: 0 16px;         /* padding to give space from edge */
+  margin: 20px 0;
+  max-width: 100%;
+}
+
+/* Individual Search Result */
+.search-results li {
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-family: Verdana, sans-serif;
+  color: #1f2937;
+  text-align: left;
+  transition: background-color 0.3s ease;
+}
+
+/* Responsive Behavior */
+@media (max-width: 750px) {
+  .search-results {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .search-results li {
+    font-size: 0.95rem;
+    padding: 12px 14px;
+  }
 }

@@ -13,7 +13,7 @@
 {% endwith %}
 
 {% if searches %}
-  <ul>
+  <ul class="search-results">
     {% for search in searches %}
       <li>
         <strong>{{ search.name }}</strong> (saved {{ search.timestamp.strftime("%Y-%m-%d %H:%M") }})

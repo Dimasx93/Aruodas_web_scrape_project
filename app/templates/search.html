@@ -9,49 +9,55 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<form method="POST">
-    {{ form.hidden_tag() }}
+<form method="POST" class="form-section">
+  {{ form.hidden_tag() }}
 
-    <label for="city">Region:</label>
-    <select id="city" name="city" class="select2-field" style="width: 40%;">
-      {% if selected_city %}
-        <option value="{{ selected_city }}" selected>{{ selected_city }}</option>
-      {% endif %}
-    </select>
+  <label for="city">Region:</label>
+  <select id="city" name="city" class="select2-field">
+    {% if selected_city %}
+      <option value="{{ selected_city }}" selected>{{ selected_city }}</option>
+    {% endif %}
+  </select>
 
-    <label for="district">District:</label>
-    <select id="district" name="district" class="select2-field" style="width: 40%;">
-      {% if selected_district %}
-        <option value="{{ selected_district }}" selected>{{ selected_district }}</option>
-      {% endif %}
-    </select>
+  <label for="district">District:</label>
+  <select id="district" name="district" class="select2-field">
+    {% if selected_district %}
+      <option value="{{ selected_district }}" selected>{{ selected_district }}</option>
+    {% endif %}
+  </select>
 
-    {{ form.price_min.label }} {{ form.price_min }}<br>
-    {{ form.price_max.label }} {{ form.price_max }}<br>
-    {{ form.size_min.label }} {{ form.size_min }}<br>
-    {{ form.size_max.label }} {{ form.size_max }}<br>
-    {{ form.price_m2_min.label }} {{ form.price_m2_min }}<br>
-    {{ form.price_m2_max.label }} {{ form.price_m2_max }}<br>
-    {{ form.number_of_rooms.label }} {{ form.number_of_rooms }}<br>
-    {{ form.submit }}
+  {{ form.price_min.label }} {{ form.price_min }}<br>
+  {{ form.price_max.label }} {{ form.price_max }}<br>
+  {{ form.size_min.label }} {{ form.size_min }}<br>
+  {{ form.size_max.label }} {{ form.size_max }}<br>
+  {{ form.price_m2_min.label }} {{ form.price_m2_min }}<br>
+  {{ form.price_m2_max.label }} {{ form.price_m2_max }}<br>
+  {{ form.number_of_rooms.label }} {{ form.number_of_rooms }}<br>
+  {{ form.submit }}
 </form>
 
 <hr>
-<h3>Save This Search</h3>
-<label for="searchName">Search Name:</label>
-<input type="text" id="searchName" placeholder="e.g. Cheap in Vilnius">
-<button id="saveSearchBtn">Save Search</button>
+
+<div class="form-section">
+  <h3>Save This Search</h3>
+  <label for="searchName">Search Name:</label>
+  <input type="text" id="searchName" placeholder="e.g. Cheap in Vilnius">
+  <button id="saveSearchBtn">Save Search</button>
+</div>
 
 <hr>
-<h3>Analyze Median Value</h3>
-<label for="fieldSelect">Select field:</label>
-<select id="fieldSelect">
+
+<div class="form-section">
+  <h3>Analyze Median Value</h3>
+  <label for="fieldSelect">Select field:</label>
+  <select id="fieldSelect">
     <option value="price">Price (€)</option>
     <option value="size_m2">Size (m²)</option>
     <option value="price_per_m2">Price per m² (€)</option>
     <option value="number_of_rooms">Number of Rooms</option>
-</select>
-<button id="analyzeBtn">Show Result</button>
+  </select>
+  <button id="analyzeBtn">Show Result</button>
+</div>
 
 <script>
 document.getElementById('analyzeBtn').addEventListener('click', () => {
@@ -86,7 +92,7 @@ document.getElementById('analyzeBtn').addEventListener('click', () => {
 
 {% if results %}
 <h3>Results:</h3>
-<ul>
+<ul class="search-results">
     {% for prop in results %}
     <li>
         {{ prop.city }}, {{ prop.district }} - {{ prop.price }} € -
