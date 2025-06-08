@@ -123,3 +123,27 @@ pip install -r requirements.txt
 
 python -m app.main
 
+## Screenshots
+
+## Main page
+![Image](https://github.com/user-attachments/assets/eb1b905b-e544-4615-9949-00557d46c81b)
+
+## If the length of the user or password is not in the min of WTF forms you'll get an error message. (img1)
+## Or if the password does not have the minimum requirements, you will also get an error message. (img2)
+
+![Image](https://github.com/user-attachments/assets/68bbcd8b-508b-45a0-b18d-d0bb3ce88e8c)
+
+![Image](https://github.com/user-attachments/assets/27d9f7c9-5527-4066-938f-25f565eda8f6)
+
+## You can search using a dropdown for Region field and District.
+
+![Image](https://github.com/user-attachments/assets/e4cbecce-cb58-4118-82a2-45ef334f7404)
+![Image](https://github.com/user-attachments/assets/205d715e-61f5-410b-b97e-b03856ae82d9)
+
+## You can also save a search for the future and or delete. 
+
+![Image](https://github.com/user-attachments/assets/73a633d5-0594-47b7-9cdf-89128a1ae557)
+
+## Also you can look up at median values such as Price, Size and more, for top/bottom Regions, or you can look at all of them, or at just a single one.
+
+![Image](https://github.com/user-attachments/assets/db3a7248-55cd-48e7-b12f-5a5fb7c06337)
