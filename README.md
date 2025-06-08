@@ -55,6 +55,8 @@ GitHub: https://github.com/Dimasx93
 
 LinkedIn: https://www.linkedin.com/in/stefano-di-mauro-132620190/
 
+Video tutorial: https://youtu.be/XOjyN4PEl7k
+
 📂 Project Structure
 
 <pre>Aruodas_web_scrape_project/
