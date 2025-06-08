@@ -240,7 +240,7 @@ input[type="submit"]:hover {
 /* Search Results List */
 .search-results {
   list-style: none;
-  padding: 0 16px;         /* padding to give space from edge */
+  padding: 0 16px;
   margin: 20px 0;
   max-width: 100%;
 }

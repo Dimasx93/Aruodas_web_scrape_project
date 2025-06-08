@@ -1,5 +1,3 @@
-# Final project, Webscraping Aruodas
-
 import re
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -7,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
 from .properties_mongo_db import save_property
 
@@ -99,7 +97,6 @@ def scrape_aruodas() -> None:
                 print("Skipping incomplete listing")
                 continue
 
-            title: str = f"{city}  {district}  {street}"
 
             raw_price: str = price_tag.text.strip()
             match_price = re.findall(r"\d+", raw_price.replace(" ", ""))

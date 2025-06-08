@@ -1,3 +1,5 @@
+# USE THIS TO RUN python -m app.main from real_estate_project dir
+
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
 from .forms import RegisterForm, LoginForm, PropertySearchForm
@@ -338,8 +340,3 @@ def analysis_page() -> str:
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-# If time permits, implement email field
-# CSS fill to fit img
-
-# USE THIS TO RUN python -m app.main from real_estate_project dir

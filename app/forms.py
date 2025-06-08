@@ -86,4 +86,3 @@ class PropertySearchForm(FlaskForm):
     price_m2_max: IntegerField = IntegerField("Max Price/m2 (€)", validators=[Optional(), NumberRange(min=1)])
 
     submit: SubmitField = SubmitField('Search')
-

@@ -89,4 +89,3 @@ def save_search(user_id: str, name: str, query: Dict[str, Any]) -> None:
         }},
         upsert=True
     )
-
